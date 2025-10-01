@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pakenham Hospital - Patient Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .chat-bubble { max-width: 80%; word-wrap: break-word; }
+        .typing-indicator { display: none; }
+        .typing-indicator.show { display: flex; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-blue-600">🏥 Pakenham Hospital</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="showSection('dashboard')" class="nav-btn text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md font-medium">Dashboard</button>
+                    <button onclick="showSection('enrollment')" class="nav-btn text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md font-medium">Enrollment</button>
+                    <button onclick="showSection('appointments')" class="nav-btn text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md font-medium">Appointments</button>
+                    <button onclick="showSection('tracking')" class="nav-btn text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md font-medium">Tracking</button>
+                    <button onclick="showSection('support')" class="nav-btn text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md font-medium">Support</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="section">
+        <!-- Hero Section -->
+        <div class="gradient-bg text-white py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-5xl font-bold mb-6">Smart Patient Management System</h1>
+                <p class="text-xl mb-8 max-w-3xl mx-auto">Modernizing healthcare with automated patient treatment processes, centralized records, and intelligent support systems.</p>
+                <div class="flex justify-center space-x-4">
+                    <button onclick="showSection('enrollment')" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300">Get Started</button>
+                    <button onclick="showSection('appointments')" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-300">Book Appointment</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">System Features</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="card-hover bg-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-4xl mb-4">👤</div>
+                    <h3 class="text-xl font-semibold mb-2">Patient Enrollment</h3>
+                    <p class="text-gray-600">Online registration and centralized patient database management</p>
+                </div>
+                <div class="card-hover bg-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-4xl mb-4">📅</div>
+                    <h3 class="text-xl font-semibold mb-2">Appointment Management</h3>
+                    <p class="text-gray-600">View doctors, book appointments, and automated waitlist management</p>
+                </div>
+                <div class="card-hover bg-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-4xl mb-4">📊</div>
+                    <h3 class="text-xl font-semibold mb-2">Real-time Tracking</h3>
+                    <p class="text-gray-600">Biometric attendance tracking and automated alert systems</p>
+                </div>
+                <div class="card-hover bg-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-4xl mb-4">🤖</div>
+                    <h3 class="text-xl font-semibold mb-2">AI Support</h3>
+                    <p class="text-gray-600">Intelligent chatbot and comprehensive helpdesk system</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="bg-blue-600 text-white py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-4 gap-8 text-center">
+                    <div>
+                        <div class="text-4xl font-bold mb-2" id="patients-count">0</div>
+                        <div class="text-blue-200">Active Patients</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2" id="appointments-count">0</div>
+                        <div class="text-blue-200">Appointments Today</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2" id="doctors-count">0</div>
+                        <div class="text-blue-200">Available Doctors</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2" id="satisfaction-rate">0</div>
+                        <div class="text-blue-200">Satisfaction Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient Enrollment Section -->
+    <div id="enrollment" class="section hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Patient Enrollment</h2>
+            
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <div class="mb-6">
+                    <div class="flex space-x-4 mb-6">
+                        <button onclick="showEnrollmentForm('new')" id="new-patient-btn" class="enrollment-tab bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">New Patient</button>
+                        <button onclick="showEnrollmentForm('existing')" id="existing-patient-btn" class="enrollment-tab bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium">Existing Patient</button>
+                    </div>
+                </div>
+
+                <!-- New Patient Form -->
+                <form id="new-patient-form" class="enrollment-form">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth *</label>
+                            <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Gender *</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                            <input type="tel" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                            <input type="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Emergency Contact Name</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Emergency Contact Phone</label>
+                            <input type="tel" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Medical History</label>
+                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Please describe any relevant medical history, allergies, or current medications"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition duration-300 font-medium">Register New Patient</button>
+                    </div>
+                </form>
+
+                <!-- Existing Patient Form -->
+                <form id="existing-patient-form" class="enrollment-form hidden">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Patient ID or Email *</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter Patient ID or Email Address" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth *</label>
+                            <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 transition duration-300 font-medium">Access Patient Records</button>
+                    </div>
+                </form>
+
+                <!-- Success Message -->
+                <div id="enrollment-success" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md mt-6">
+                    <div class="flex items-center">
+                        <span class="text-2xl mr-3">✅</span>
+                        <div>
+                            <strong>Success!</strong> Patient enrollment completed successfully.
+                            <p class="mt-1">Patient ID: <span id="generated-patient-id" class="font-mono bg-green-200 px-2 py-1 rounded"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointments Section -->
+    <div id="appointments" class="section hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Appointment Management</h2>
+            
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Available Doctors -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-6">Available Doctors</h3>
+                        <div class="space-y-4" id="doctors-list">
+                            <!-- Doctors will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointment Booking -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-6">Book Appointment</h3>
+                        <form id="appointment-form">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Patient ID *</label>
+                                    <input type="text" id="appointment-patient-id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Selected Doctor *</label>
+                                    <select id="selected-doctor" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                        <option value="">Select a doctor</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Date *</label>
+                                    <input type="date" id="appointment-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Time *</label>
+                                    <select id="appointment-time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                        <option value="">Select time</option>
+                                        <option value="09:00">09:00 AM</option>
+                                        <option value="10:00">10:00 AM</option>
+                                        <option value="11:00">11:00 AM</option>
+                                        <option value="14:00">02:00 PM</option>
+                                        <option value="15:00">03:00 PM</option>
+                                        <option value="16:00">04:00 PM</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Visit</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Brief description of your concern"></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition duration-300 font-medium">Book Appointment</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Waitlist Management -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
+                        <h3 class="text-xl font-semibold mb-4">Waitlist Status</h3>
+                        <div id="waitlist-info" class="text-center text-gray-500">
+                            <p>No active waitlist entries</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Appointments -->
+            <div class="mt-8">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6">Your Upcoming Appointments</h3>
+                    <div id="upcoming-appointments" class="space-y-4">
+                        <!-- Appointments will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tracking Section -->
+    <div id="tracking" class="section hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Real-time Tracking & Monitoring</h2>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Check-in System -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6">Patient Check-in</h3>
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <div class="text-6xl mb-4">📱</div>
+                            <h4 class="text-lg font-medium mb-2">Multiple Check-in Methods</h4>
+                            <p class="text-gray-600 mb-6">Choose your preferred check-in method</p>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <button onclick="simulateCheckin('biometric')" class="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 transition duration-300 font-medium flex items-center justify-center">
+                                <span class="mr-2">👆</span> Biometric Check-in
+                            </button>
+                            <button onclick="simulateCheckin('rfid')" class="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition duration-300 font-medium flex items-center justify-center">
+                                <span class="mr-2">📡</span> RFID Check-in
+                            </button>
+                            <button onclick="simulateCheckin('online')" class="w-full bg-purple-600 text-white py-3 px-4 rounded-md hover:bg-purple-700 transition duration-300 font-medium flex items-center justify-center">
+                                <span class="mr-2">💻</span> Online Check-in
+                            </button>
+                        </div>
+
+                        <div id="checkin-status" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md">
+                            <div class="flex items-center">
+                                <span class="text-2xl mr-3">✅</span>
+                                <div>
+                                    <strong>Check-in Successful!</strong>
+                                    <p class="mt-1">Time: <span id="checkin-time"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Tracking -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6">Attendance Overview</h3>
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">This Month</span>
+                                <span class="text-2xl font-bold text-green-600">92%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-600 h-2 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">Last 7 Days</span>
+                                <span class="text-2xl font-bold text-blue-600">6/7</span>
+                            </div>
+                            <div class="flex space-x-1">
+                                <div class="w-4 h-4 bg-green-500 rounded"></div>
+                                <div class="w-4 h-4 bg-green-500 rounded"></div>
+                                <div class="w-4 h-4 bg-green-500 rounded"></div>
+                                <div class="w-4 h-4 bg-green-500 rounded"></div>
+                                <div class="w-4 h-4 bg-red-500 rounded"></div>
+                                <div class="w-4 h-4 bg-green-500 rounded"></div>
+                                <div class="w-4 h-4 bg-green-500 rounded"></div>
+                            </div>
+                        </div>
+
+                        <div id="attendance-alerts" class="space-y-2">
+                            <!-- Alerts will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-time Dashboard -->
+            <div class="mt-8">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6">Real-time Hospital Status</h3>
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-600 mb-2" id="current-patients">24</div>
+                            <div class="text-sm text-gray-600">Patients in Hospital</div>
+                            <div class="pulse-animation w-3 h-3 bg-green-500 rounded-full mx-auto mt-2"></div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-600 mb-2" id="checked-in-today">18</div>
+                            <div class="text-sm text-gray-600">Checked in Today</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-orange-600 mb-2" id="pending-checkins">3</div>
+                            <div class="text-sm text-gray-600">Pending Check-ins</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-red-600 mb-2" id="low-attendance">2</div>
+                            <div class="text-sm text-gray-600">Low Attendance Alerts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Section -->
+    <div id="support" class="section hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Patient Support & Helpdesk</h2>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- AI Chatbot -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6 flex items-center">
+                        <span class="mr-2">🤖</span> AI Health Assistant
+                    </h3>
+                    <div class="border rounded-lg h-96 flex flex-col">
+                        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4">
+                            <div class="chat-bubble bg-blue-100 p-3 rounded-lg">
+                                <p class="text-sm"><strong>AI Assistant:</strong> Hello! I'm here to help with your health questions. How can I assist you today?</p>
+                            </div>
+                        </div>
+                        <div class="typing-indicator p-4">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                <span class="text-sm text-gray-500 ml-2">AI is typing...</span>
+                            </div>
+                        </div>
+                        <div class="border-t p-4">
+                            <div class="flex space-x-2">
+                                <input type="text" id="chat-input" placeholder="Type your health question..." class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <button onclick="sendMessage()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support Services -->
+                <div class="space-y-6">
+                    <!-- Helpdesk Ticketing -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <span class="mr-2">🎫</span> Submit Support Ticket
+                        </h3>
+                        <form id="ticket-form">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Issue Category</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                        <option value="">Select Category</option>
+                                        <option value="technical">Technical Issue</option>
+                                        <option value="billing">Billing Question</option>
+                                        <option value="appointment">Appointment Issue</option>
+                                        <option value="medical">Medical Inquiry</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                        <option value="low">Low</option>
+                                        <option value="medium" selected>Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="urgent">Urgent</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Please describe your issue in detail" required></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-300 font-medium">Submit Ticket</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Counselling Services -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <span class="mr-2">💚</span> Counselling Services
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                <div>
+                                    <h4 class="font-medium">Mental Health Counselling</h4>
+                                    <p class="text-sm text-gray-600">Professional mental health support</p>
+                                </div>
+                                <button onclick="bookCounselling('mental')" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 text-sm">Book</button>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                                <div>
+                                    <h4 class="font-medium">Career Counselling</h4>
+                                    <p class="text-sm text-gray-600">Career guidance and planning</p>
+                                </div>
+                                <button onclick="bookCounselling('career')" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 text-sm">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-8">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6">Quick Actions</h3>
+                    <div class="grid md:grid-cols-4 gap-4">
+                        <button onclick="showFAQ()" class="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition duration-300 text-center">
+                            <div class="text-2xl mb-2">❓</div>
+                            <div class="font-medium">FAQ</div>
+                        </button>
+                        <button onclick="contactSupport()" class="p-4 bg-green-50 rounded-lg hover:bg-green-100 transition duration-300 text-center">
+                            <div class="text-2xl mb-2">📞</div>
+                            <div class="font-medium">Contact Support</div>
+                        </button>
+                        <button onclick="downloadApp()" class="p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition duration-300 text-center">
+                            <div class="text-2xl mb-2">📱</div>
+                            <div class="font-medium">Mobile App</div>
+                        </button>
+                        <button onclick="systemStatus()" class="p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition duration-300 text-center">
+                            <div class="text-2xl mb-2">⚡</div>
+                            <div class="font-medium">System Status</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentSection = 'dashboard';
+        let patients = [];
+        let appointments = [];
+        let doctors = [
+            { id: 1, name: 'Dr. Sarah Johnson', specialty: 'Cardiology', available: true, rating: 4.9 },
+            { id: 2, name: 'Dr. Michael Chen', specialty: 'Neurology', available: true, rating: 4.8 },
+            { id: 3, name: 'Dr. Emily Davis', specialty: 'Pediatrics', available: false, rating: 4.7 },
+            { id: 4, name: 'Dr. Robert Wilson', specialty: 'Orthopedics', available: true, rating: 4.9 },
+            { id: 5, name: 'Dr. Lisa Anderson', specialty: 'Dermatology', available: true, rating: 4.6 }
+        ];
+
+        // Navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.remove('hidden');
+            currentSection = sectionName;
+            
+            // Update navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'font-semibold');
+                btn.classList.add('text-gray-700');
+            });
+            event.target.classList.add('text-blue-600', 'font-semibold');
+            
+            // Initialize section-specific content
+            if (sectionName === 'appointments') {
+                loadDoctors();
+                loadAppointments();
+            } else if (sectionName === 'tracking') {
+                updateTrackingStats();
+            }
+        }
+
+        // Dashboard animations
+        function animateStats() {
+            const stats = [
+                { id: 'patients-count', target: 1247 },
+                { id: 'appointments-count', target: 34 },
+                { id: 'doctors-count', target: 28 },
+                { id: 'satisfaction-rate', target: 98, suffix: '%' }
+            ];
+
+            stats.forEach(stat => {
+                let current = 0;
+                const increment = stat.target / 50;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= stat.target) {
+                        current = stat.target;
+                        clearInterval(timer);
+                    }
+                    document.getElementById(stat.id).textContent = Math.floor(current) + (stat.suffix || '');
+                }, 30);
+            });
+        }
+
+        // Patient Enrollment
+        function showEnrollmentForm(type) {
+            document.querySelectorAll('.enrollment-form').forEach(form => {
+                form.classList.add('hidden');
+            });
+            document.querySelectorAll('.enrollment-tab').forEach(tab => {
+                tab.classList.remove('bg-blue-600', 'text-white');
+                tab.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            document.getElementById(`${type}-patient-form`).classList.remove('hidden');
+            document.getElementById(`${type}-patient-btn`).classList.add('bg-blue-600', 'text-white');
+            document.getElementById(`${type}-patient-btn`).classList.remove('bg-gray-200', 'text-gray-700');
+        }
+
+        // Form submissions
+        document.getElementById('new-patient-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const patientId = 'PH' + Date.now().toString().slice(-6);
+            document.getElementById('generated-patient-id').textContent = patientId;
+            document.getElementById('enrollment-success').classList.remove('hidden');
+            this.reset();
+            
+            // Store patient data (simplified)
+            patients.push({
+                id: patientId,
+                name: 'New Patient',
+                enrolled: new Date()
+            });
+        });
+
+        document.getElementById('existing-patient-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Patient records accessed successfully! (Demo)');
+            this.reset();
+        });
+
+        // Appointments
+        function loadDoctors() {
+            const doctorsList = document.getElementById('doctors-list');
+            const doctorSelect = document.getElementById('selected-doctor');
+            
+            doctorsList.innerHTML = '';
+            doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
+            
+            doctors.forEach(doctor => {
+                // Doctor card
+                const doctorCard = document.createElement('div');
+                doctorCard.className = `p-4 border rounded-lg ${doctor.available ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`;
+                doctorCard.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold text-lg">${doctor.name}</h4>
+                            <p class="text-gray-600">${doctor.specialty}</p>
+                            <div class="flex items-center mt-2">
+                                <span class="text-yellow-500">⭐</span>
+                                <span class="ml-1 text-sm">${doctor.rating}</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="px-2 py-1 rounded-full text-xs ${doctor.available ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}">
+                                ${doctor.available ? 'Available' : 'Busy'}
+                            </span>
+                            ${doctor.available ? `<button onclick="selectDoctor(${doctor.id})" class="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">Select</button>` : ''}
+                        </div>
+                    </div>
+                `;
+                doctorsList.appendChild(doctorCard);
+                
+                // Doctor option
+                if (doctor.available) {
+                    const option = document.createElement('option');
+                    option.value = doctor.id;
+                    option.textContent = `${doctor.name} - ${doctor.specialty}`;
+                    doctorSelect.appendChild(option);
+                }
+            });
+        }
+
+        function selectDoctor(doctorId) {
+            document.getElementById('selected-doctor').value = doctorId;
+        }
+
+        document.getElementById('appointment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const appointmentId = 'APT' + Date.now().toString().slice(-6);
+            const doctorId = document.getElementById('selected-doctor').value;
+            const doctor = doctors.find(d => d.id == doctorId);
+            const date = document.getElementById('appointment-date').value;
+            const time = document.getElementById('appointment-time').value;
+            
+            appointments.push({
+                id: appointmentId,
+                patientId: document.getElementById('appointment-patient-id').value,
+                doctor: doctor.name,
+                date: date,
+                time: time,
+                status: 'Confirmed'
+            });
+            
+            alert(`Appointment booked successfully!\nAppointment ID: ${appointmentId}\nDoctor: ${doctor.name}\nDate: ${date} at ${time}`);
+            this.reset();
+            loadAppointments();
+        });
+
+        function loadAppointments() {
+            const appointmentsList = document.getElementById('upcoming-appointments');
+            if (appointments.length === 0) {
+                appointmentsList.innerHTML = '<p class="text-gray-500 text-center">No upcoming appointments</p>';
+                return;
+            }
+            
+            appointmentsList.innerHTML = appointments.map(apt => `
+                <div class="p-4 border border-blue-200 bg-blue-50 rounded-lg">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold">${apt.doctor}</h4>
+                            <p class="text-gray-600">Date: ${apt.date} at ${apt.time}</p>
+                            <p class="text-sm text-gray-500">ID: ${apt.id}</p>
+                        </div>
+                        <span class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs">${apt.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Tracking
+        function simulateCheckin(method) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            
+            document.getElementById('checkin-time').textContent = timeString;
+            document.getElementById('checkin-status').classList.remove('hidden');
+            
+            // Update stats
+            const checkedInToday = document.getElementById('checked-in-today');
+            checkedInToday.textContent = parseInt(checkedInToday.textContent) + 1;
+            
+            setTimeout(() => {
+                document.getElementById('checkin-status').classList.add('hidden');
+            }, 5000);
+        }
+
+        function updateTrackingStats() {
+            // Simulate real-time updates
+            setInterval(() => {
+                const currentPatients = document.getElementById('current-patients');
+                const current = parseInt(currentPatients.textContent);
+                const change = Math.random() > 0.5 ? 1 : -1;
+                const newValue = Math.max(0, current + change);
+                currentPatients.textContent = newValue;
+            }, 10000);
+        }
+
+        // Support - Chatbot
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            const chatMessages = document.getElementById('chat-messages');
+            
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat-bubble bg-gray-100 p-3 rounded-lg ml-auto max-w-xs';
+            userMessage.innerHTML = `<p class="text-sm"><strong>You:</strong> ${message}</p>`;
+            chatMessages.appendChild(userMessage);
+            
+            input.value = '';
+            
+            // Show typing indicator
+            document.querySelector('.typing-indicator').classList.add('show');
+            
+            // Simulate AI response
+            setTimeout(() => {
+                document.querySelector('.typing-indicator').classList.remove('show');
+                
+                const aiResponse = getAIResponse(message);
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'chat-bubble bg-blue-100 p-3 rounded-lg max-w-xs';
+                aiMessage.innerHTML = `<p class="text-sm"><strong>AI Assistant:</strong> ${aiResponse}</p>`;
+                chatMessages.appendChild(aiMessage);
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 2000);
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getAIResponse(message) {
+            const responses = {
+                'headache': 'For headaches, try resting in a quiet, dark room and staying hydrated. If headaches persist or are severe, please consult with a doctor.',
+                'fever': 'For fever, rest and drink plenty of fluids. Monitor your temperature and seek medical attention if it exceeds 101°F (38.3°C) or persists.',
+                'appointment': 'You can book an appointment through our Appointments section. Would you like me to guide you there?',
+                'medication': 'For medication questions, please consult with your doctor or pharmacist. I can help you schedule an appointment if needed.',
+                'emergency': 'If this is a medical emergency, please call 000 immediately or visit the emergency department.',
+                'default': 'I understand your concern. For specific medical advice, I recommend consulting with one of our healthcare professionals. Would you like to book an appointment?'
+            };
+            
+            const lowerMessage = message.toLowerCase();
+            for (const [key, response] of Object.entries(responses)) {
+                if (lowerMessage.includes(key)) {
+                    return response;
+                }
+            }
+            return responses.default;
+        }
+
+        // Support form
+        document.getElementById('ticket-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const ticketId = 'TKT' + Date.now().toString().slice(-6);
+            alert(`Support ticket submitted successfully!\nTicket ID: ${ticketId}\nOur team will respond within 24 hours.`);
+            this.reset();
+        });
+
+        // Counselling booking
+        function bookCounselling(type) {
+            const typeNames = {
+                'mental': 'Mental Health Counselling',
+                'career': 'Career Counselling'
+            };
+            alert(`${typeNames[type]} appointment request submitted!\nOur counselling team will contact you within 2 business days to schedule your session.`);
+        }
+
+        // Quick actions
+        function showFAQ() {
+            alert('FAQ: Common questions and answers about our services.\n\n1. How do I book an appointment?\n2. What are your visiting hours?\n3. How do I access my medical records?\n4. What insurance do you accept?\n\n(This would open a detailed FAQ page in a real system)');
+        }
+
+        function contactSupport() {
+            alert('Contact Support:\n\nPhone: (03) 5941 8000\nEmail: support@pakenhamhospital.com.au\nLive Chat: Available 24/7\n\nEmergency: 000');
+        }
+
+        function downloadApp() {
+            alert('Mobile App:\n\nDownload our mobile app for convenient access to all PMS features:\n\n📱 iOS: Available on App Store\n🤖 Android: Available on Google Play\n\n(This would redirect to app stores in a real system)');
+        }
+
+        function systemStatus() {
+            alert('System Status: All systems operational ✅\n\n• Patient Management: Online\n• Appointment Booking: Online\n• Check-in System: Online\n• Support Chat: Online\n\nLast updated: ' + new Date().toLocaleString());
+        }
+
+        // Chat input enter key
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Set minimum date for appointments
+        document.getElementById('appointment-date').min = new Date().toISOString().split('T')[0];
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(animateStats, 500);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96e6a3c1711de7d2',t:'MTc1NTA3MTYxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
